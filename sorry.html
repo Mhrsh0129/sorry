@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I'm Sorry</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #ffafbd, #ffc3a0);
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 1;
+        }
+        
+        h1 {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+        
+        p {
+            font-size: 1.8rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.5;
+        }
+        
+        .heart {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            opacity: 0;
+            animation: float-heart 15s linear infinite, fade-in-out 15s ease-in-out infinite;
+        }
+        
+        @keyframes float-heart {
+            0% {
+                transform: translateY(100vh) translateX(0);
+            }
+            100% {
+                transform: translateY(-100px) translateX(calc(100vw * var(--direction)));
+            }
+        }
+        
+        @keyframes fade-in-out {
+            0%, 100% {
+                opacity: 0;
+            }
+            20%, 80% {
+                opacity: 0.8;
+            }
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background-color: white;
+            color: #ff6b6b;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .no-btn {
+            background-color: rgba(255, 100, 100, 0.2);
+            border-color: #ff6b6b;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>I'm Sorry</h1>
+        <p>My heart aches knowing I've hurt you. Please forgive me. You mean everything to me, and I promise to make it right.</p>
+        <div class="button-container">
+        <a href="#" class="btn" id="forgiveBtn">Forgive Me?</a>
+        <a href="#" class="btn no-btn" id="noBtn">No</a>
+    </div>
+    </div>
+    
+    <script>
+        // Create hearts
+        function createHearts(count) {
+            const colors = ['#ff6b6b', '#ff8e8e', '#ffb6b6', '#ff4d4d'];
+            
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    
+                    // Set random starting position at bottom of screen
+                    const startX = Math.random() * window.innerWidth;
+                    const size = Math.random() * 20 + 20; // 20-40px
+                    const direction = Math.random() > 0.5 ? 0.5 : -0.5; // Move left or right
+                    const duration = Math.random() * 10 + 10; // 10-20s
+                    const delay = Math.random() * 5;
+                    
+                    heart.style.cssText = `
+                        left: ${startX}px;
+                        bottom: -${size}px;
+                        --direction: ${direction};
+                        width: ${size}px;
+                        height: ${size}px;
+                        animation-duration: ${duration}s;
+                        animation-delay: ${delay}s;
+                        background-color: ${colors[Math.floor(Math.random() * colors.length)]};
+                        clip-path: path('M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z');
+                    `;
+                    
+                    document.body.appendChild(heart);
+                    
+                    // Remove heart after animation completes
+                    setTimeout(() => {
+                        heart.remove();
+                    }, (duration + delay) * 1000);
+                    
+                }, i * 300);
+            }
+        }
+        
+        // Initial hearts
+        createHearts(30);
+        
+        // Add more hearts every few seconds
+        setInterval(() => {
+            createHearts(5);
+        }, 5000);
+        
+        // Button effects
+        document.getElementById('forgiveBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            this.innerText = "Thank You! ❤️";
+            createHearts(50);
+            setTimeout(() => {
+                this.innerText = "Forgive Me?";
+            }, 3000);
+        });
+        
+        // Dodging No button
+        const noBtn = document.getElementById('noBtn');
+        
+        // Function to move the No button when cursor approaches
+        document.addEventListener('mousemove', function(e) {
+            const noBtn = document.getElementById('noBtn');
+            
+            // Calculate distance between cursor and button
+            const btnRect = noBtn.getBoundingClientRect();
+            const btnCenterX = btnRect.left + btnRect.width / 2;
+            const btnCenterY = btnRect.top + btnRect.height / 2;
+            
+            const distanceX = e.clientX - btnCenterX;
+            const distanceY = e.clientY - btnCenterY;
+            const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+            
+            // If cursor is within 100px of the button, move it away
+            if (distance < 100) {
+                // Calculate new position that's away from cursor
+                let newX = Math.random() * (window.innerWidth - 150);
+                let newY = Math.random() * (window.innerHeight - 80);
+                
+                // Make sure button stays visible within viewport
+                newX = Math.max(20, Math.min(newX, window.innerWidth - 100));
+                newY = Math.max(20, Math.min(newY, window.innerHeight - 60));
+                
+                noBtn.style.position = 'fixed';
+                noBtn.style.left = newX + 'px';
+                noBtn.style.top = newY + 'px';
+                noBtn.style.zIndex = '100';
+                noBtn.style.transition = 'all 0.3s ease';
+            }
+        });
+    </script>
+</body>
+</html>
